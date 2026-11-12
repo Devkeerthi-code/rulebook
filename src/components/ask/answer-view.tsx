@@ -4,6 +4,7 @@ import Link from "next/link";
 import { Fragment } from "react";
 import { parseAnswer, type Inline } from "@/lib/answer-format";
 import type { AnswerSource } from "@/lib/answer-types";
+import { nameSources } from "@/lib/citations";
 import { formatDate } from "@/lib/doc-types";
 import { Icon } from "../icons";
 import { useSpace } from "../space/space-context";
@@ -80,7 +81,7 @@ function ConflictCallout({ answer }: { answer: AnswerItem }) {
           Newer rule wins
         </span>
       </div>
-      {answer.conflict.note && <p>{answer.conflict.note}</p>}
+      {answer.conflict.note && <p>{nameSources(answer.conflict.note, answer.sources)}</p>}
       <p>
         The answer follows <CitationChip source={newer} /> dated {formatDate(newer.effectiveDate)}, which is newer than <CitationChip source={older} /> dated{" "}
         {formatDate(older.effectiveDate)}.

@@ -1,13 +1,13 @@
 import type { Metadata } from "next";
 import Link from "next/link";
 import { CreateSpaceForm } from "@/components/create-space-form";
+import { SpaceBadge } from "@/components/space/space-badge";
 import { SubmitButton } from "@/components/forms";
 import { SimpleTopbar } from "@/components/page-chrome";
 import { joinDemoAction } from "@/server/actions/space-actions";
 import { logoutAction } from "@/server/actions/auth-actions";
 import { requireUser } from "@/server/auth";
 import { db } from "@/server/db";
-import { badge } from "@/lib/doc-types";
 
 export const metadata: Metadata = { title: "Your spaces" };
 
@@ -51,7 +51,7 @@ export default async function SpacesPage({ searchParams }: { searchParams: Promi
         )}
 
         {memberships.length === 0 ? (
-          <div className="card empty-inline">
+          <div className="card">
             <h2 className="card-title">You haven&apos;t joined a college yet</h2>
             <p className="muted">
               Students: open the invite link your college shared (it looks like <code>/join/…</code>). Or try the demo college below, or set up yours.
@@ -62,13 +62,11 @@ export default async function SpacesPage({ searchParams }: { searchParams: Promi
             {memberships.map(({ role, space }) => (
               <li key={space.id}>
                 <Link className="space-card" href={`/s/${space.id}`}>
-                  <span className="mono" aria-hidden="true">
-                    {badge(space.shortName)}
-                  </span>
+                  <SpaceBadge shortName={space.shortName} />
                   <span className="space-card-body">
                     <b>{space.name}</b>
                     <span>
-                      {space._count.documents} documents &middot; {space._count.memberships} {space._count.memberships === 1 ? "member" : "members"} &middot;{" "}
+                      {space._count.documents} {space._count.documents === 1 ? "document" : "documents"} &middot; {space._count.memberships} {space._count.memberships === 1 ? "member" : "members"} &middot;{" "}
                       {space.isDemo ? "demo, read-only" : role === "ADMIN" ? "you're an admin" : "member"}
                     </span>
                   </span>

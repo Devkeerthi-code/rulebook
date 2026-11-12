@@ -4,11 +4,12 @@ import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { useEffect, useState } from "react";
 import type { DocTypeName } from "@/lib/answer-types";
-import { badge, DOC_TYPE_META, shortTitle } from "@/lib/doc-types";
+import { DOC_TYPE_META, shortTitle } from "@/lib/doc-types";
 import { logoutAction } from "@/server/actions/auth-actions";
 import { Icon, LogoMark } from "../icons";
 import { PdfPanelProvider, useOpenPdf } from "../pdf/pdf-panel";
 import { PatternFill } from "../shelf/cover";
+import { SpaceBadge } from "./space-badge";
 import { ThemeToggle } from "../theme-toggle";
 import { CONVERSATION_EVENT, SpaceProvider, useSpace, type ConversationEventDetail, type SpaceInfo } from "./space-context";
 
@@ -81,9 +82,7 @@ function ShellInner({ memberCount, userName, docs, conversations: initialConvers
       </a>
       <aside className={`app-side${drawerOpen ? " open" : ""}`} aria-label={`${space.name} navigation`} id="space-nav">
         <Link href="/spaces" className="space-switch" title="Switch college">
-          <span className="mono" aria-hidden="true">
-            {badge(space.shortName)}
-          </span>
+          <SpaceBadge shortName={space.shortName} />
           <div>
             <b>{space.name}</b>
             <span>

@@ -15,6 +15,7 @@ export interface MemberItem {
 export function MembersList({ spaceId, members }: { spaceId: string; members: MemberItem[] }) {
   const [pending, start] = useTransition();
   const [confirming, setConfirming] = useState<string | null>(null);
+  const onlyAdmin = members.filter((m) => m.role === "ADMIN").length <= 1;
 
   const run = (fn: () => Promise<{ error?: string }>, ok: string) =>
     start(async () => {
@@ -52,6 +53,7 @@ export function MembersList({ spaceId, members }: { spaceId: string; members: Me
                 </>
               ) : (
                 <>
+                  {!(m.isYou && m.role === "ADMIN" && onlyAdmin) && (
                   <button
                     className="btn btn-sm btn-ghost"
                     type="button"
@@ -65,6 +67,7 @@ export function MembersList({ spaceId, members }: { spaceId: string; members: Me
                   >
                     {m.role === "ADMIN" ? "Make member" : "Make admin"}
                   </button>
+                  )}
                   {!m.isYou && (
                     <button className="btn btn-sm btn-ghost" type="button" onClick={() => setConfirming(m.userId)} aria-label={`Remove ${m.name}`}>
                       Remove
