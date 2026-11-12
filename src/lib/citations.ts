@@ -62,7 +62,15 @@ export function parseConflict(line: string | null, sources: AnswerSource[]): Con
   const b = resolveCitation(nums[1]!, sources);
   if (!a || !b || a.n === b.n || a.documentId === b.documentId) return null;
   const [newer, older] = a.effectiveDate >= b.effectiveDate ? [a, b] : [b, a];
-  return { newer: newer.n, older: older.n, note: sanitizeAnswer(note).slice(0, 300) };
+  return { newer: newer.n, older: older.n, note: nameSources(sanitizeAnswer(note), sources).slice(0, 300) };
+}
+
+/** The model refers to sources as S1, S2; students should see document names instead. */
+export function nameSources(text: string, sources: AnswerSource[]): string {
+  return text.replace(/\[?\bS(\d+)\b\]?/g, (match, n: string) => {
+    const s = resolveCitation(Number(n), sources);
+    return s ? `${s.title.replace(/\s*\(DEMO\)/i, "")} (p. ${s.page})` : match;
+  });
 }
 
 export interface FinalAnswer {

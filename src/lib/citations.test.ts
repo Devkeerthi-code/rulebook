@@ -1,7 +1,7 @@
 import { describe, expect, it } from "vitest";
 import type { AnswerSource } from "./answer-types";
 import { parseAnswer } from "./answer-format";
-import { citedNumbers, finalizeAnswer, normalizeCitations, parseConflict, resolveCitation, sanitizeAnswer } from "./citations";
+import { citedNumbers, finalizeAnswer, nameSources, normalizeCitations, parseConflict, resolveCitation, sanitizeAnswer } from "./citations";
 
 function source(n: number, over: Partial<AnswerSource> = {}): AnswerSource {
   return {
@@ -93,7 +93,16 @@ describe("parseAnswer", () => {
         { kind: "text", text: ".", bold: false },
       ],
     });
-    expect(blocks[1]).toMatchObject({ kind: "ul" });
-    expect(blocks[1]!.kind === "ul" && blocks[1].items).toHaveLength(2);
+    const list = blocks[1];
+    expect(list?.kind).toBe("ul");
+    expect(list?.kind === "ul" ? list.items : []).toHaveLength(2);
+  });
+});
+
+describe("nameSources", () => {
+  it("replaces S-numbers in a conflict note with document names and pages", () => {
+    expect(nameSources("S2 raised the 60% rule in S1 to 65%.", sources)).toBe(
+      "Circular 07/2025 (p. 1) raised the 60% rule in Student Handbook (p. 5) to 65%.",
+    );
   });
 });
