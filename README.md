@@ -2,7 +2,7 @@
 
 Ask your college's handbook, regulations, placement policy and circulars in plain words, and get an answer where every line cites the document and page.
 
-**Live demo:** TODO: add the link after deploying (see [Deploy](#deploy)).
+**Showcase:** https://devkeerthi-code.github.io/rulebook/ shows screenshots of the real app, the evaluation numbers and an interactive design preview. The working app needs a server, Postgres and a Gemini key, so it runs locally (see [How to run locally](#how-to-run-locally)) or on Vercel (see [Deploy](#deploy)).
 
 ![Rulebook landing page](docs/landing.jpg)
 
@@ -213,7 +213,7 @@ Sign up, then use **Try the demo college** or **Set up a college** to create you
 
 ## Deploy
 
-Free tiers: **Vercel** (app) + **Neon** (Postgres with pgvector) + **Google AI Studio** (Gemini key).
+The showcase page is served by GitHub Pages from the `docs/` folder (Settings → Pages → `main` / `docs`). To run the full app online, use free tiers: **Vercel** (app) + **Neon** (Postgres with pgvector) + **Google AI Studio** (Gemini key).
 
 1. **Neon:** create a project, preferably in the same region you'll pick on Vercel. Copy the *pooled* connection string. pgvector is available; the migration runs `CREATE EXTENSION IF NOT EXISTS vector`.
 2. **Gemini:** create an API key at https://aistudio.google.com/apikey.
@@ -228,7 +228,7 @@ Free tiers: **Vercel** (app) + **Neon** (Postgres with pgvector) + **Google AI S
    | `GEMINI_EMBED_MODEL` | no | Defaults to `gemini-embedding-001` (must support 768-d output) |
 
 5. Deploy, then seed the demo college once from your machine against the production database: `DATABASE_URL=… GEMINI_API_KEY=… npm run db:seed`.
-6. TODO: put the live URL at the top of this README.
+6. Optionally, add the Vercel URL next to the showcase link at the top of this README.
 
 If your Neon database already has tables (for example Neon's sample `playing_with_neon`), `prisma migrate deploy` refuses to run on a non-empty schema. Use a fresh database or branch.
 

@@ -1,0 +1,143 @@
+<!doctype html>
+<html lang="en-IN">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+  <title>Rulebook — college rules, answered with the page number</title>
+  <meta name="description" content="Rulebook answers students' questions from their college's handbook, regulations, placement policy and circulars. Every answer cites the document and page, and it says so when the rule isn't there.">
+  <meta name="color-scheme" content="light dark">
+  <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect x='5' y='3' width='22' height='26' fill='%231B1915'/%3E%3Cpath d='M19 3h6v13l-3-2.5-3 2.5z' fill='%23B83A0A'/%3E%3C/svg%3E">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,500..800&family=IBM+Plex+Sans:wght@400;500;600&family=Kalam:wght@400&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="design-concept/styles.css">
+  <style>
+    .showcase-hero { padding-block: var(--s-8) var(--s-7); }
+    .showcase-hero h1 { font-size: var(--t-display); max-width: 13ch; }
+    .showcase-hero h1 .em { color: var(--accent); }
+    .showcase-hero .lede { margin-top: var(--s-5); font-size: 1.1875rem; color: var(--ink-2); max-width: 54ch; line-height: 1.5; }
+    .cta { display: flex; flex-wrap: wrap; gap: var(--s-3); margin-top: var(--s-6); }
+    .note { margin-top: var(--s-5); max-width: 60ch; font-size: var(--t-small); color: var(--ink-2); border: 1.5px dashed var(--ink-3); padding: var(--s-3) var(--s-4); background: var(--surface); }
+    .shots { display: grid; gap: var(--s-5); grid-template-columns: 1fr; }
+    @media (min-width: 900px) { .shots { grid-template-columns: 1fr 1fr; } }
+    .shot { margin: 0; border: 2px solid var(--ink); background: var(--surface); box-shadow: 6px 6px 0 var(--ink); }
+    .shot img { width: 100%; height: auto; border-bottom: 2px solid var(--ink); }
+    .shot figcaption { padding: var(--s-3) var(--s-4); font-size: var(--t-small); color: var(--ink-2); }
+    .shot figcaption b { color: var(--ink); }
+    .phone { display: grid; gap: var(--s-6); align-items: center; margin-top: var(--s-7); }
+    @media (min-width: 900px) { .phone { grid-template-columns: 300px 1fr; } }
+    .phone img { width: 100%; max-width: 300px; border: 2px solid var(--ink); box-shadow: 6px 6px 0 var(--ink); }
+    .numbers { display: grid; grid-template-columns: repeat(2, 1fr); border: 2px solid var(--ink); background: var(--surface); }
+    @media (min-width: 900px) { .numbers { grid-template-columns: repeat(4, 1fr); } }
+    .numbers div { padding: var(--s-4) var(--s-5); border-right: 1.5px solid var(--line); border-bottom: 1.5px solid var(--line); }
+    .numbers b { display: block; font: 800 2.5rem/1 var(--font-display); letter-spacing: -.04em; }
+    .numbers span { font-size: var(--t-small); color: var(--ink-3); }
+    .fine { margin-top: var(--s-3); font-size: var(--t-small); color: var(--ink-3); max-width: 70ch; }
+    .list { display: grid; gap: var(--s-3); padding-left: 1.2em; max-width: 70ch; color: var(--ink-2); }
+    .list b { color: var(--ink); }
+    pre { background: var(--ink); color: var(--paper); padding: var(--s-4) var(--s-5); overflow-x: auto; font-size: var(--t-small); line-height: 1.6; border: 2px solid var(--ink); max-width: 720px; }
+  </style>
+</head>
+<body>
+<a class="skip" href="#main">Skip to content</a>
+<header class="topbar">
+  <div class="wrap">
+    <a class="logo" href="./" aria-label="Rulebook home">
+      <svg class="logo-mark" viewBox="0 0 30 34" aria-hidden="true"><rect x="1" y="1" width="26" height="32" fill="var(--surface)" stroke="currentColor" stroke-width="2"/><path d="M6 9h11M6 14h14M6 19h9" stroke="currentColor" stroke-width="2"/><path d="M19 0h7v16l-3.5-3-3.5 3z" fill="var(--accent)"/></svg>
+      Rulebook
+    </a>
+    <nav class="links" aria-label="Page">
+      <a href="#see-it">Screens</a>
+      <a href="#numbers">Evaluation</a>
+      <a href="#run">Run it</a>
+    </nav>
+    <a class="btn btn-sm" href="https://github.com/Devkeerthi-code/rulebook">View the code</a>
+  </div>
+</header>
+
+<main id="main">
+  <section class="showcase-hero wrap" aria-labelledby="title">
+    <span class="sticker sticker--accent" style="--tilt:-5deg; --pop:1">Every line cited</span>
+    <h1 id="title" style="margin-top: var(--s-5)">The rules, answered. With the <span class="em">page number.</span></h1>
+    <p class="lede">Attendance cut-offs, re-evaluation fees, backlog limits for placements and hostel in-times are buried in 200-page PDFs and scattered circulars. Rulebook lets a college upload them once. Students then ask in plain words and get an answer where every line links to the exact page. When a newer circular changes a rule, the answer follows the circular. When the documents don't say, Rulebook says so.</p>
+    <div class="cta">
+      <a class="btn btn-primary" href="design-concept/">Try the interactive design preview</a>
+      <a class="btn" href="https://github.com/Devkeerthi-code/rulebook">Read the code and README</a>
+    </div>
+    <p class="note">This page is a static showcase. The working app needs a server, a Postgres database with pgvector and a Gemini API key, so it can't run on GitHub Pages. The screenshots below are of the real app, running locally on a fictional demo college. The design preview uses demo data.</p>
+  </section>
+
+  <section class="section" id="see-it" aria-labelledby="see-title" style="padding-top: var(--s-7)">
+    <div class="wrap">
+      <div class="section-num">01 &nbsp;The real app</div>
+      <div class="section-head">
+        <h2 id="see-title">Calm on purpose. You came here to read a rule.</h2>
+        <p>All screens are from the working app, asking questions of a fictional college ("Northfield Institute of Technology, DEMO").</p>
+      </div>
+      <div class="shots">
+        <figure class="shot"><img src="answer.jpg" alt="An answer with citation chips and a 'Two documents disagree, newer rule wins' callout" loading="lazy"><figcaption><b>Every claim cites a page.</b> The handbook says 60%, a newer circular says 65%: the answer follows the circular and says so.</figcaption></figure>
+        <figure class="shot"><img src="pdf-citation.jpg" alt="The cited PDF page open in a side panel with the passage highlighted" loading="lazy"><figcaption><b>Tap a citation, get the page.</b> The PDF opens at that page with the passage highlighted.</figcaption></figure>
+        <figure class="shot"><img src="not-found.jpg" alt="A 'Not in your documents' answer showing the closest passages" loading="lazy"><figcaption><b>It won't guess.</b> If the documents don't cover a question, it says so and shows the closest passages.</figcaption></figure>
+        <figure class="shot"><img src="shelf.jpg" alt="A shelf of generated document covers with an 'Updated circular' sticker" loading="lazy"><figcaption><b>The shelf.</b> Every uploaded PDF becomes a cover you can drag or flick, with its type, effective date and page count.</figcaption></figure>
+      </div>
+      <div class="phone">
+        <img src="mobile.png" alt="Rulebook answering a question on a phone" loading="lazy">
+        <div>
+          <h3 style="font-size: var(--t-h2)">Built for the phone in a student's pocket.</h3>
+          <ul class="list" style="margin-top: var(--s-4)">
+            <li><b>Multi-college.</b> Any college creates a space; students join with an invite link. Colleges are fully isolated, and tests check it.</li>
+            <li><b>Scanned PDFs work.</b> Pages without a text layer go through OCR before indexing.</li>
+            <li><b>Hybrid search.</b> pgvector similarity and Postgres full-text search, merged and re-ranked.</li>
+            <li><b>Safe with untrusted PDFs.</b> Text inside documents is treated as data, never as instructions.</li>
+            <li><b>Admins see the gaps.</b> Unanswered and downvoted questions show which document is missing.</li>
+          </ul>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section class="section" id="numbers" aria-labelledby="numbers-title" style="padding-top: var(--s-7)">
+    <div class="wrap">
+      <div class="section-num">02 &nbsp;Measured, not assumed</div>
+      <div class="section-head">
+        <h2 id="numbers-title">15 questions, real model calls.</h2>
+        <p>The evaluation script asks the demo college 15 questions with a known answer page, 3 it can't answer, and one with a planted prompt injection.</p>
+      </div>
+      <div class="numbers">
+        <div><b>100%</b><span>answers cite the right page (15/15)</span></div>
+        <div><b>100%</b><span>right page in the top 5 search results</span></div>
+        <div><b>3/3</b><span>unanswerable questions refused</span></div>
+        <div><b>~3 s</b><span>median time to a full answer</span></div>
+      </div>
+      <p class="fine">The demo corpus (19 pages) and the questions are my own, so real handbooks will score lower. The script exists so those numbers can be measured.</p>
+    </div>
+  </section>
+
+  <section class="section" id="run" aria-labelledby="run-title" style="padding-top: var(--s-7)">
+    <div class="wrap">
+      <div class="section-num">03 &nbsp;Run it yourself</div>
+      <div class="section-head">
+        <h2 id="run-title">Four commands and two keys.</h2>
+        <p>You need a Postgres database with pgvector (Neon's free tier works) and a free Gemini API key. Full steps are in the README.</p>
+      </div>
+<pre><code>cp .env.example .env    # add DATABASE_URL and GEMINI_API_KEY
+npm install
+npm run db:migrate
+npm run db:seed         # builds the fictional demo college
+npm run dev             # http://localhost:3000</code></pre>
+      <div class="cta">
+        <a class="btn btn-primary" href="https://github.com/Devkeerthi-code/rulebook#how-to-run-locally">Setup steps</a>
+        <a class="btn" href="design-concept/">Interactive design preview</a>
+      </div>
+    </div>
+  </section>
+</main>
+
+<footer class="footer">
+  <div class="wrap">
+    <span class="big" aria-hidden="true">Rulebook</span>
+    <p>Next.js, TypeScript, Postgres with pgvector, Gemini. The demo college and its documents are fictional.</p>
+  </div>
+</footer>
+</body>
+</html>
