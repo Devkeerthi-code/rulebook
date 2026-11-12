@@ -1,0 +1,305 @@
+generator client {
+  provider = "prisma-client"
+  output   = "../src/generated/prisma"
+}
+
+datasource db {
+  provider = "postgresql"
+}
+
+enum Role {
+  ADMIN
+  MEMBER
+}
+
+/// Document types are told apart in the UI by cover pattern, never by colour.
+enum DocType {
+  HANDBOOK
+  REGULATIONS
+  SYLLABUS
+  POLICY
+  CIRCULAR
+  RULES
+  OTHER
+}
+
+/// Ingestion runs as resumable steps so each request stays inside serverless time limits.
+enum IngestStatus {
+  QUEUED
+  EXTRACTING
+  OCR
+  CHUNKING
+  EMBEDDING
+  READY
+  FAILED
+}
+
+enum MessageRole {
+  USER
+  ASSISTANT
+}
+
+enum AnswerOutcome {
+  ANSWERED
+  NOT_FOUND
+  ERROR
+}
+
+enum Rating {
+  UP
+  DOWN
+}
+
+enum FeedbackReason {
+  WRONG_ANSWER
+  OUTDATED_RULE
+  WRONG_PAGE
+  INCOMPLETE
+  SHOULD_BE_IN_DOCS
+  OTHER
+}
+
+enum UsageType {
+  SIGNUP
+  SPACE_CREATED
+  SPACE_JOINED
+  DOCUMENT_UPLOADED
+  DOCUMENT_READY
+  QUESTION_ASKED
+  ANSWER_NOT_FOUND
+  CITATION_OPENED
+  FEEDBACK_GIVEN
+}
+
+model User {
+  id           String   @id @default(cuid())
+  email        String   @unique
+  name         String
+  passwordHash String
+  createdAt    DateTime @default(now())
+
+  sessions      Session[]
+  memberships   Membership[]
+  conversations Conversation[]
+  feedback      Feedback[]
+  uploads       Document[]
+}
+
+model Session {
+  id        String   @id @default(cuid())
+  /// SHA-256 of the cookie token, so a database leak can't be replayed as a login.
+  tokenHash String   @unique
+  userId    String
+  expiresAt DateTime
+  createdAt DateTime @default(now())
+
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@index([userId])
+  @@index([expiresAt])
+}
+
+model Space {
+  id            String   @id @default(cuid())
+  name          String
+  shortName     String
+  /// Invite link token. Rotating it invalidates every link shared before.
+  inviteToken   String   @unique
+  inviteEnabled Boolean  @default(true)
+  /// The seeded fictional college. Members can ask, nobody can manage it from the UI.
+  isDemo        Boolean  @default(false)
+  createdAt     DateTime @default(now())
+
+  memberships        Membership[]
+  documents          Document[]
+  chunks             Chunk[]
+  conversations      Conversation[]
+  messages           Message[]
+  feedback           Feedback[]
+  suggestedQuestions SuggestedQuestion[]
+}
+
+model Membership {
+  userId    String
+  spaceId   String
+  role      Role     @default(MEMBER)
+  createdAt DateTime @default(now())
+
+  user  User  @relation(fields: [userId], references: [id], onDelete: Cascade)
+  space Space @relation(fields: [spaceId], references: [id], onDelete: Cascade)
+
+  @@id([userId, spaceId])
+  @@index([spaceId, role])
+}
+
+model Document {
+  id            String       @id @default(cuid())
+  spaceId       String
+  title         String
+  type          DocType
+  /// Date the rules in this document take effect. Newer wins when documents conflict.
+  effectiveDate DateTime     @db.Date
+  /// Bumped every time the PDF is replaced; old pages and chunks are deleted on re-index.
+  version       Int          @default(1)
+  status        IngestStatus @default(QUEUED)
+  /// Stage detail for the progress UI: { pagesRead, ocrPending, ocrDone, chunks, embedded }.
+  progress      Json         @default("{}")
+  errorMessage  String?
+  fileName      String
+  fileSize      Int
+  fileSha256    String
+  pageCount     Int          @default(0)
+  ocrPageCount  Int          @default(0)
+  uploadedById  String?
+  createdAt     DateTime     @default(now())
+  updatedAt     DateTime     @updatedAt
+  readyAt       DateTime?
+  /// Short lease so two tabs driving ingestion never process the same document at once.
+  leaseUntil    DateTime?
+
+  space      Space               @relation(fields: [spaceId], references: [id], onDelete: Cascade)
+  uploadedBy User?               @relation(fields: [uploadedById], references: [id], onDelete: SetNull)
+  file       DocumentFile?
+  pages      DocumentPage[]
+  chunks     Chunk[]
+  suggested  SuggestedQuestion[]
+
+  /// Lets Chunk reference (id, spaceId) so a chunk can never point at another space's document.
+  @@unique([id, spaceId])
+  @@index([spaceId, status])
+  @@index([spaceId, effectiveDate])
+}
+
+/// PDF bytes live apart from Document so listing documents never loads files.
+model DocumentFile {
+  documentId String @id
+  bytes      Bytes
+  mimeType   String @default("application/pdf")
+
+  document Document @relation(fields: [documentId], references: [id], onDelete: Cascade)
+}
+
+model DocumentPage {
+  documentId String
+  pageNumber Int
+  text       String
+  /// True when the text came from Gemini OCR because the page had no text layer.
+  ocr        Boolean @default(false)
+  needsOcr   Boolean @default(false)
+
+  document Document @relation(fields: [documentId], references: [id], onDelete: Cascade)
+
+  @@id([documentId, pageNumber])
+  @@index([documentId, needsOcr])
+}
+
+/// A retrievable passage. `embedding` (pgvector) and `tsv` (generated tsvector) are managed in SQL.
+model Chunk {
+  id         String                      @id @default(cuid())
+  spaceId    String
+  documentId String
+  pageNumber Int
+  ordinal    Int
+  heading    String
+  text       String
+  embedding  Unsupported("vector(768)")?
+  tsv        Unsupported("tsvector")?
+  createdAt  DateTime                    @default(now())
+
+  space    Space    @relation(fields: [spaceId], references: [id], onDelete: Cascade)
+  document Document @relation(fields: [documentId, spaceId], references: [id, spaceId], onDelete: Cascade)
+
+  @@unique([documentId, ordinal])
+  @@index([spaceId])
+  @@index([documentId, pageNumber])
+}
+
+model Conversation {
+  id        String   @id @default(cuid())
+  spaceId   String
+  userId    String
+  title     String
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  space    Space     @relation(fields: [spaceId], references: [id], onDelete: Cascade)
+  user     User      @relation(fields: [userId], references: [id], onDelete: Cascade)
+  messages Message[]
+
+  @@index([spaceId, userId, updatedAt])
+}
+
+model Message {
+  id             String         @id @default(cuid())
+  conversationId String
+  spaceId        String
+  role           MessageRole
+  content        String
+  outcome        AnswerOutcome?
+  /// Sources shown with the answer (see AnswerSource in src/lib/answer-types.ts).
+  sources        Json?
+  /// { newer, older, note } when two documents disagree.
+  conflict       Json?
+  latencyMs      Int?
+  createdAt      DateTime       @default(now())
+
+  conversation Conversation @relation(fields: [conversationId], references: [id], onDelete: Cascade)
+  space        Space        @relation(fields: [spaceId], references: [id], onDelete: Cascade)
+  feedback     Feedback?
+
+  @@index([conversationId, createdAt])
+  @@index([spaceId, role, outcome, createdAt])
+}
+
+model Feedback {
+  id        String          @id @default(cuid())
+  messageId String          @unique
+  spaceId   String
+  userId    String
+  rating    Rating
+  reason    FeedbackReason?
+  note      String?
+  createdAt DateTime        @default(now())
+  updatedAt DateTime        @updatedAt
+
+  message Message @relation(fields: [messageId], references: [id], onDelete: Cascade)
+  space   Space   @relation(fields: [spaceId], references: [id], onDelete: Cascade)
+  user    User    @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@index([spaceId, rating, createdAt])
+}
+
+model SuggestedQuestion {
+  id         String   @id @default(cuid())
+  spaceId    String
+  documentId String
+  text       String
+  createdAt  DateTime @default(now())
+
+  space    Space    @relation(fields: [spaceId], references: [id], onDelete: Cascade)
+  document Document @relation(fields: [documentId], references: [id], onDelete: Cascade)
+
+  @@index([spaceId])
+}
+
+/// Fixed-window counters. One row per (key, window); old rows are pruned opportunistically.
+model RateLimitBucket {
+  key         String
+  windowStart DateTime
+  count       Int      @default(0)
+
+  @@id([key, windowStart])
+  @@index([windowStart])
+}
+
+/// Privacy-respecting usage counts: event type and ids only, never question text.
+model UsageEvent {
+  id        BigInt    @id @default(autoincrement())
+  type      UsageType
+  userId    String?
+  spaceId   String?
+  createdAt DateTime  @default(now())
+
+  @@index([type, createdAt])
+  @@index([spaceId, type])
+}
