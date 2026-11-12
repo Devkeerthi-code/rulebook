@@ -1,5 +1,6 @@
 import { AiQuotaError, type Embedder } from "@/lib/ai-types";
 import { chunkPages, embeddingInput } from "@/lib/chunking";
+import { MAX_PDF_PAGES } from "@/lib/validation";
 import type { IngestStatus, Prisma } from "@/generated/prisma/client";
 import { db } from "./db";
 import { extractPages, extractSinglePage, needsOcr } from "./pdf";
@@ -57,6 +58,9 @@ async function setStage(documentId: string, status: IngestStatus, progress: Inge
 async function extractStage(documentId: string, progress: IngestProgress): Promise<IngestStatus> {
   const file = await db.documentFile.findUniqueOrThrow({ where: { documentId } });
   const { pageCount, pages } = await extractPages(file.bytes);
+  if (pageCount > MAX_PDF_PAGES) {
+    throw new IngestError(`This PDF has ${pageCount} pages; the limit is ${MAX_PDF_PAGES}. Split it into parts and upload each one.`);
+  }
   const ocrTotal = pages.filter((p) => needsOcr(p.text)).length;
   await db.$transaction([
     db.chunk.deleteMany({ where: { documentId } }),
