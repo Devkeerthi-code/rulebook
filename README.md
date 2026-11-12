@@ -4,7 +4,7 @@ Ask your college's handbook, regulations, placement policy and circulars in plai
 
 **Live demo:** TODO: add the link after deploying (see [Deploy](#deploy)).
 
-![Rulebook landing page](docs/landing.png)
+![Rulebook landing page](docs/landing.jpg)
 
 ## Who is this for and what problem does it solve?
 
@@ -22,9 +22,9 @@ Rulebook lets a college upload those PDFs once. Anyone with the invite link can 
 
 | Answer with citations and a conflict | Citation opens the PDF at the page |
 |---|---|
-| ![Answer](docs/answer.png) | ![PDF citation](docs/pdf-citation.png) |
-| **Not in your documents** | **Admin: shelf and live ingestion** |
-| ![Not found](docs/not-found.png) | ![Shelf](docs/shelf-admin.png) |
+| ![Answer](docs/answer.jpg) | ![PDF citation](docs/pdf-citation.jpg) |
+| **Not in your documents** | **The document shelf (drag or flick it)** |
+| ![Not found](docs/not-found.jpg) | ![Shelf](docs/shelf.jpg) |
 
 <p align="center"><img src="docs/mobile.png" alt="Rulebook on a phone" width="300"></p>
 

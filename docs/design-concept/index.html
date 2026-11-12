@@ -1,0 +1,485 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+  <title>Rulebook — design concept preview</title>
+  <meta name="description" content="Design concept for Rulebook: ask your college's rules and get the answer with the exact page it came from.">
+  <meta name="color-scheme" content="light dark">
+  <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect x='5' y='3' width='22' height='26' fill='%231B1915'/%3E%3Cpath d='M19 3h6v13l-3-2.5-3 2.5z' fill='%23B83A0A'/%3E%3C/svg%3E">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,500..800&family=IBM+Plex+Sans:ital,wght@0,400;0,500;0,600;1,400&family=Kalam:wght@400;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="styles.css">
+  <script>
+    (function () {
+      try { var t = localStorage.getItem("rb-theme"); if (t === "light" || t === "dark") document.documentElement.dataset.theme = t; } catch (e) {}
+    })();
+  </script>
+</head>
+<body>
+<a class="skip" href="#ask-demo">Skip to the ask screen</a>
+
+<!-- Icon sprite: one stroke family (1.75px, square caps) used everywhere -->
+<svg width="0" height="0" style="position:absolute" aria-hidden="true">
+  <defs>
+    <symbol id="i-send" viewBox="0 0 24 24"><path d="M12 19V5M5 12l7-7 7 7" fill="none" stroke="currentColor" stroke-width="2.25" stroke-linecap="square"/></symbol>
+    <symbol id="i-up" viewBox="0 0 24 24"><path d="M7 11v9H3v-9zM7 20h10.5l2.5-8.5V10h-6l1-5-1.5-1L7 11" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linejoin="round"/></symbol>
+    <symbol id="i-down" viewBox="0 0 24 24"><path d="M7 13V4H3v9zM7 4h10.5l2.5 8.5V14h-6l1 5-1.5 1L7 13" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linejoin="round"/></symbol>
+    <symbol id="i-close" viewBox="0 0 24 24"><path d="M6 6l12 12M18 6L6 18" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="square"/></symbol>
+    <symbol id="i-left" viewBox="0 0 24 24"><path d="M15 5l-7 7 7 7" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="square"/></symbol>
+    <symbol id="i-right" viewBox="0 0 24 24"><path d="M9 5l7 7-7 7" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="square"/></symbol>
+    <symbol id="i-warn" viewBox="0 0 24 24"><path d="M12 3l10 18H2z" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linejoin="round"/><path d="M12 10v5M12 17.5v.5" stroke="currentColor" stroke-width="2" stroke-linecap="square"/></symbol>
+    <symbol id="i-check" viewBox="0 0 24 24"><path d="M4 12.5l5 5L20 6" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="square"/></symbol>
+    <symbol id="i-page" viewBox="0 0 24 24"><path d="M5 2h10l4 4v16H5z M15 2v4h4" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linejoin="round"/><path d="M8 11h8M8 15h8M8 19h5" stroke="currentColor" stroke-width="1.75"/></symbol>
+    <symbol id="i-clock" viewBox="0 0 24 24"><circle cx="12" cy="12" r="9" fill="none" stroke="currentColor" stroke-width="1.75"/><path d="M12 7v5l3 2" fill="none" stroke="currentColor" stroke-width="1.75"/></symbol>
+    <symbol id="i-upload" viewBox="0 0 24 24"><path d="M12 16V4M6 10l6-6 6 6M4 20h16" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="square"/></symbol>
+    <symbol id="i-replay" viewBox="0 0 24 24"><path d="M4 12a8 8 0 1 0 2.5-5.8M4 4v5h5" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="square"/></symbol>
+    <symbol id="logo" viewBox="0 0 30 34"><rect x="1" y="1" width="26" height="32" fill="var(--surface)" stroke="currentColor" stroke-width="2"/><path d="M6 9h11M6 14h14M6 19h9" stroke="currentColor" stroke-width="2"/><path d="M19 0h7v16l-3.5-3-3.5 3z" fill="var(--accent)"/></symbol>
+  </defs>
+</svg>
+
+<!-- 1. Concept strip -->
+<div class="concept-strip" role="note" aria-label="Concept preview notice">
+  <div class="wrap">
+    <strong>Concept preview</strong>
+    <span class="long">Not the real app. Every college, document and number here is <b>DEMO</b> data.</span>
+    <span class="hand">v0.1, for review</span>
+    <span class="spacer"></span>
+    <nav aria-label="Concept sections">
+      <a href="#shelf">Shelf</a><a href="#how">How</a><a href="#ask-demo">Ask</a><a href="#ingest">Upload</a><a href="#admin">Admin</a><a href="#system">System</a>
+    </nav>
+    <div class="theme-toggle" role="group" aria-label="Colour theme">
+      <button type="button" data-theme-set="light" aria-pressed="false">Light</button>
+      <button type="button" data-theme-set="dark" aria-pressed="false">Dark</button>
+    </div>
+  </div>
+</div>
+
+<header class="topbar">
+  <div class="wrap">
+    <a class="logo" href="#top" aria-label="Rulebook home"><svg class="logo-mark" aria-hidden="true"><use href="#logo"/></svg>Rulebook</a>
+    <nav class="links" aria-label="Product (mock)">
+      <a href="#how">How it works</a>
+      <a href="#ingest">For admins</a>
+      <a href="#ask-demo">Try a question</a>
+    </nav>
+    <a class="btn btn-sm" href="#ask-demo" data-spring>Join your college</a>
+  </div>
+</header>
+
+<main id="top">
+  <!-- 2. Hero -->
+  <section class="hero" aria-labelledby="hero-title">
+    <div class="wrap">
+      <div class="hero-space">
+        <span class="demo-tag">Space: Northfield Institute of Technology — DEMO</span>
+        <span class="eyebrow">6 documents &middot; 264 pages</span>
+        <span class="sticker sticker--accent" data-sticker style="--tilt:-5deg">Every line cited</span>
+      </div>
+      <h1 id="hero-title" class="reveal" data-reveal="load">The rules, answered. With the <span class="em">page number.</span></h1>
+      <div class="hero-grid">
+        <div class="hero-ask">
+          <form class="ask" id="hero-form" role="search" aria-label="Ask the rulebook">
+            <label class="visually-hidden" for="hero-input">Ask a question about your college's rules</label>
+            <input id="hero-input" name="q" type="text" autocomplete="off" maxlength="300" placeholder="How many backlogs are allowed for placements?">
+            <button class="btn btn-primary" type="submit" data-spring aria-label="Ask"><svg aria-hidden="true"><use href="#i-send"/></svg><span>Ask</span></button>
+          </form>
+          <p class="hint">Answers come only from your college's uploaded PDFs. Every line links to its page.</p>
+        </div>
+        <p class="hero-lede">Attendance cut-offs, re-evaluation fees, backlog limits for placements, hostel in-times. Ask in plain words, read the exact clause, stop relying on what a senior heard from a senior.</p>
+      </div>
+    </div>
+    <div class="hero-note" aria-hidden="true">
+      <span class="hand">no more "ask a senior"</span>
+      <svg viewBox="0 0 90 70" fill="none"><path d="M78 6C70 30 50 52 14 60M14 60l12-12M14 60l16 4" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"/></svg>
+    </div>
+  </section>
+
+  <div class="ticker-row-label wrap">
+    <span class="hand">questions students actually ask, tap one</span>
+    <button class="btn btn-ghost btn-sm" type="button" id="ticker-pause" aria-pressed="false">Pause</button>
+  </div>
+  <div class="ticker" data-dir="left" style="--speed: 70s"><div class="ticker-track" data-questions="a"></div></div>
+  <div class="ticker" data-dir="right" style="--speed: 85s"><div class="ticker-track" data-questions="b"></div></div>
+
+  <!-- 3. Shelf -->
+  <section class="section" id="shelf" aria-labelledby="shelf-title">
+    <div class="wrap">
+      <div class="section-num">01 &nbsp;The shelf</div>
+      <div class="section-head">
+        <h2 id="shelf-title" class="reveal">Every PDF your college ever sent, on one shelf.</h2>
+        <p>Each upload becomes a cover with its type, effective date and page count, so you can see at a glance what Rulebook is reading from. Newer circulars wear a sticker.</p>
+      </div>
+    </div>
+    <div class="shelf-wrap">
+      <div class="shelf" id="shelf-viewport" tabindex="0" role="region" aria-roledescription="carousel" aria-label="Document shelf. Drag, flick, or use left and right arrow keys.">
+        <ul class="shelf-track" id="shelf-track" role="list"></ul>
+      </div>
+      <div class="shelf-plank" aria-hidden="true"></div>
+    </div>
+    <div class="wrap shelf-controls">
+      <span class="hand">drag it, flick it, or use the arrow keys</span>
+      <button class="btn btn-sm" type="button" data-shelf="-1" data-spring aria-label="Scroll shelf left"><svg aria-hidden="true"><use href="#i-left"/></svg></button>
+      <button class="btn btn-sm" type="button" data-shelf="1" data-spring aria-label="Scroll shelf right"><svg aria-hidden="true"><use href="#i-right"/></svg></button>
+    </div>
+  </section>
+
+  <!-- 4. How it works -->
+  <section class="section" id="how" aria-labelledby="how-title" style="padding-top: var(--s-8)">
+    <div class="wrap">
+      <div class="section-num">02 &nbsp;How it works</div>
+      <div class="section-head">
+        <h2 id="how-title" class="reveal">Four steps from a 200-page PDF to one clear line.</h2>
+        <p>Admins upload once. Students ask forever. Nothing is answered from the internet or from memory, only from what is on the shelf.</p>
+      </div>
+      <ol class="steps" role="list">
+        <li class="step" data-inview>
+          <div class="illo" aria-hidden="true">
+            <svg viewBox="0 0 240 180" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+              <path class="draw" style="--len:420" d="M40 120h160l-14 44H54z"/>
+              <path class="draw" style="--len:120" d="M40 120l18-22h124l18 22"/>
+              <g class="bob">
+                <rect x="88" y="22" width="64" height="82" fill="var(--surface)"/>
+                <path d="M98 40h44M98 52h44M98 64h30" />
+                <rect x="132" y="22" width="20" height="18" class="wash" stroke="none"/>
+                <text x="135" y="35" font-size="10" font-family="IBM Plex Sans" font-weight="700" fill="currentColor" stroke="none">PDF</text>
+              </g>
+              <path class="acc-s draw" style="--len:80" d="M190 40v40M178 52l12-12 12 12" stroke-width="3"/>
+            </svg>
+          </div>
+          <span class="step-n">1<small>upload</small></span>
+          <h3>The admin drops in the PDFs</h3>
+          <p>Handbook, regulations, syllabi, placement policy, the circular from last Tuesday. Scanned copies too.</p>
+        </li>
+        <li class="step" data-inview>
+          <div class="illo" aria-hidden="true">
+            <svg viewBox="0 0 240 180" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+              <rect class="draw" style="--len:400" x="56" y="20" width="110" height="142" fill="var(--surface)"/>
+              <path d="M72 44h78M72 58h78M72 72h60M72 92h78M72 106h78M72 120h44M72 140h70" stroke-width="2"/>
+              <g class="scan"><path class="acc-s" d="M48 36h126" stroke-width="3"/></g>
+              <circle class="draw" style="--len:200" cx="168" cy="118" r="28" fill="var(--paper)" fill-opacity=".6"/>
+              <path class="draw" style="--len:60" d="M188 138l26 26" stroke-width="6"/>
+            </svg>
+          </div>
+          <span class="step-n">2<small>we read it</small></span>
+          <h3>Rulebook reads every page</h3>
+          <p>Text is pulled out page by page, scanned pages go through OCR, and each clause is indexed with its page number.</p>
+        </li>
+        <li class="step" data-inview>
+          <div class="illo" aria-hidden="true">
+            <svg viewBox="0 0 240 180" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+              <rect class="draw" style="--len:520" x="22" y="70" width="196" height="46" rx="23" fill="var(--surface)"/>
+              <path d="M42 93h104" stroke-width="2" stroke-dasharray="6 6"/>
+              <rect x="176" y="76" width="34" height="34" rx="17" class="acc" stroke="none"/>
+              <path d="M193 101V85M186 92l7-7 7 7" stroke="var(--on-accent)" stroke-width="2.5"/>
+              <g class="bob"><path class="draw" style="--len:200" d="M50 20h90a10 10 0 0 1 10 10v16a10 10 0 0 1-10 10H78l-14 12V56H50a10 10 0 0 1-10-10V30a10 10 0 0 1 10-10z" fill="var(--surface)"/>
+              <path d="M58 34h70M58 44h44" stroke-width="2"/></g>
+              <path d="M170 30q12 -10 24 0" stroke-width="2"/><path d="M178 44q6 -6 12 0" stroke-width="2"/>
+            </svg>
+          </div>
+          <span class="step-n">3<small>ask</small></span>
+          <h3>Students ask in plain words</h3>
+          <p>"Can I sit placements with one backlog?" No need to know which document or which section it lives in.</p>
+        </li>
+        <li class="step" data-inview>
+          <div class="illo" aria-hidden="true">
+            <svg viewBox="0 0 240 180" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+              <rect x="60" y="14" width="120" height="152" fill="var(--surface)"/>
+              <path d="M76 36h88M76 50h88M76 64h60" stroke-width="2"/>
+              <rect x="72" y="80" width="96" height="30" class="wash" stroke="none"/>
+              <path class="draw acc-s" style="--len:200" d="M72 110h96" stroke-width="3"/>
+              <path d="M78 88h84M78 100h60" stroke-width="2"/>
+              <path d="M76 126h88M76 140h70" stroke-width="2"/>
+              <path d="M150 14v30l8-7 8 7V14" class="acc" stroke="none"/>
+              <g class="bob"><rect x="168" y="118" width="58" height="26" rx="13" fill="var(--surface)" class="acc-s"/>
+              <text x="180" y="136" font-size="13" font-family="IBM Plex Sans" font-weight="700" class="acc" stroke="none">p.14</text></g>
+            </svg>
+          </div>
+          <span class="step-n">4<small>get the page</small></span>
+          <h3>The answer opens to the page</h3>
+          <p>Every claim has a chip. Tap it and the PDF opens at that page with the passage highlighted. Check it yourself.</p>
+        </li>
+      </ol>
+    </div>
+  </section>
+
+  <!-- 5. Ask screen -->
+  <section class="section" id="ask-demo" aria-labelledby="ask-title" style="padding-top: var(--s-8)">
+    <div class="wrap">
+      <div class="section-num">03 &nbsp;The ask screen</div>
+      <div class="section-head">
+        <h2 id="ask-title" class="reveal">Calm on purpose. You came here to read a rule.</h2>
+        <p>The app itself drops the theatrics: a reading-size answer, citation chips, a clear warning when two documents disagree, and an honest "not in your documents" when it is not.</p>
+      </div>
+
+      <div class="app" aria-label="Ask screen mock">
+        <aside class="app-side" aria-label="Space sidebar">
+          <div class="space-switch">
+            <span class="mono" aria-hidden="true">NIT</span>
+            <div><b>Northfield Institute of Technology</b><span>DEMO space &middot; 1,240 members</span></div>
+          </div>
+          <div>
+            <h4>On the shelf</h4>
+            <ul class="side-list" id="side-docs"></ul>
+          </div>
+          <div>
+            <h4>Your recent questions</h4>
+            <ul class="side-list" id="side-history"></ul>
+          </div>
+        </aside>
+
+        <div class="app-main">
+          <div class="app-bar">
+            <span class="title">Ask Northfield's rulebook</span>
+            <span class="demo-tag">Demo answers</span>
+          </div>
+          <div class="thread" id="thread" aria-live="polite" aria-busy="false">
+            <div class="thread-inner" id="thread-inner"></div>
+          </div>
+          <div class="composer">
+            <div class="composer-inner">
+              <div class="starters" id="starters" aria-label="Suggested questions"></div>
+              <form class="ask" id="app-form" aria-label="Ask a question">
+                <label class="visually-hidden" for="app-input">Your question</label>
+                <input id="app-input" type="text" autocomplete="off" maxlength="300" placeholder="Ask about attendance, exams, placements, hostel...">
+                <button class="btn btn-primary" type="submit" id="app-send" data-spring aria-label="Ask"><svg aria-hidden="true"><use href="#i-send"/></svg></button>
+              </form>
+              <div class="meta"><span>Answers only from documents on this shelf.</span><span id="rate">18 of 20 questions left this hour</span></div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- 6. Ingestion + empty states -->
+  <section class="section" id="ingest" aria-labelledby="ingest-title" style="padding-top: var(--s-8)">
+    <div class="wrap">
+      <div class="section-num">04 &nbsp;Uploading, and nothing yet</div>
+      <div class="section-head">
+        <h2 id="ingest-title" class="reveal">Watch it read. Know when it's ready.</h2>
+        <p>Big PDFs take a minute. Instead of a spinner, admins see which page is being read, when OCR kicks in for scanned pages, and exactly when students can start asking.</p>
+      </div>
+      <div class="ingest-grid">
+        <div class="card" aria-labelledby="up-title">
+          <h3 id="up-title">Adding a document</h3>
+          <div class="upload-file">
+            <svg class="file-glyph" viewBox="0 0 44 54" aria-hidden="true"><path d="M2 2h28l12 12v38H2z" fill="var(--surface)" stroke="currentColor" stroke-width="2"/><path d="M30 2v12h12" fill="none" stroke="currentColor" stroke-width="2"/><rect x="8" y="30" width="28" height="12" fill="var(--ink)"/><text x="12" y="39.5" font-size="9" font-weight="700" font-family="IBM Plex Sans" fill="var(--paper)">PDF</text></svg>
+            <div><b>Academic_Regulations_R22_DEMO.pdf</b><span>86 pages &middot; 14.2 MB &middot; 8 pages scanned</span></div>
+          </div>
+          <div class="progress" role="progressbar" aria-label="Processing progress" aria-valuemin="0" aria-valuemax="100" aria-valuenow="0" id="ingest-bar"><i></i></div>
+          <ol class="stages" id="stages">
+            <li data-stage="upload"><span class="mark"><svg aria-hidden="true"><use href="#i-check"/></svg></span><span>Uploading</span><span class="val"></span></li>
+            <li data-stage="read"><span class="mark"><svg aria-hidden="true"><use href="#i-check"/></svg></span><span>Reading pages</span><span class="val"></span></li>
+            <li data-stage="ocr"><span class="mark"><svg aria-hidden="true"><use href="#i-check"/></svg></span><span>OCR on scanned pages</span><span class="val"></span></li>
+            <li data-stage="chunk"><span class="mark"><svg aria-hidden="true"><use href="#i-check"/></svg></span><span>Splitting into clauses</span><span class="val"></span></li>
+            <li data-stage="embed"><span class="mark"><svg aria-hidden="true"><use href="#i-check"/></svg></span><span>Indexing for search</span><span class="val"></span></li>
+          </ol>
+          <div class="ocr-preview" id="ocr-preview" hidden aria-hidden="true"></div>
+          <p class="ingest-status" id="ingest-status" aria-live="polite">Waiting to start.</p>
+          <div class="ingest-ready" id="ingest-ready" hidden>
+            <span class="sticker sticker--success" data-sticker style="--tilt:-3deg"><svg aria-hidden="true"><use href="#i-check"/></svg>Ready to ask</span>
+            <span style="font-size: var(--t-small); color: var(--ink-2)">612 clauses from 86 pages</span>
+          </div>
+          <div><button class="btn btn-sm" type="button" id="ingest-replay" data-spring><svg aria-hidden="true"><use href="#i-replay"/></svg>Replay upload</button></div>
+        </div>
+
+        <div class="card empty" aria-labelledby="e1-title">
+          <div class="illo" aria-hidden="true">
+            <svg viewBox="0 0 320 200" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+              <path d="M20 150h280" stroke-width="6"/>
+              <path d="M40 150V92h22v58" fill="var(--surface)"/>
+              <path d="M40 92l11-10 11 10" />
+              <g class="bob"><path d="M150 60c10-14 30-14 40 0" stroke-dasharray="3 7"/><circle cx="168" cy="42" r="3" fill="currentColor"/><circle cx="196" cy="30" r="2" fill="currentColor"/><circle cx="140" cy="34" r="2.5" fill="currentColor"/></g>
+              <path d="M262 150v-46l18 4v42" fill="var(--surface)"/>
+              <path d="M110 150c8-4 20-4 30 0M200 150c6-3 14-3 22 0" stroke-width="2" stroke-dasharray="2 6"/>
+            </svg>
+          </div>
+          <span class="hand">the shelf's waiting</span>
+          <h3 id="e1-title">No documents yet</h3>
+          <p>Upload the student handbook first. It answers most questions on its own. Add regulations and the placement policy next.</p>
+          <div class="row">
+            <button class="btn btn-primary btn-sm" type="button" data-spring data-toast="Demo: this would open the file picker (PDF, up to 50 MB)."><svg aria-hidden="true"><use href="#i-upload"/></svg>Upload a PDF</button>
+            <button class="btn btn-sm" type="button" data-spring data-toast="Demo: copies an invite link to share with co-admins.">Invite a co-admin</button>
+          </div>
+        </div>
+
+        <div class="card empty" aria-labelledby="e2-title">
+          <div class="illo" aria-hidden="true">
+            <svg viewBox="0 0 320 200" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+              <g class="bob"><path d="M70 40h150a14 14 0 0 1 14 14v40a14 14 0 0 1-14 14h-96l-24 22v-22H70a14 14 0 0 1-14-14V54a14 14 0 0 1 14-14z" fill="var(--surface)"/>
+              <text x="132" y="92" font-family="Bricolage Grotesque" font-weight="800" font-size="46" fill="currentColor" stroke="none">?</text></g>
+              <path d="M246 132l10-12M262 148l14-4M246 154l6 10" stroke="var(--accent)" stroke-width="3"/>
+              <path d="M40 170h240" stroke-width="2" stroke-dasharray="2 8"/>
+            </svg>
+          </div>
+          <span class="hand">go on, ask the awkward one</span>
+          <h3 id="e2-title">No questions yet</h3>
+          <p>The handbook is on the shelf. Start with one of these, they are the most asked in the first week of a semester.</p>
+          <div class="row" id="empty-starters"></div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- 7. Admin glimpse -->
+  <section class="section" id="admin" aria-labelledby="admin-title" style="padding-top: var(--s-8)">
+    <div class="wrap">
+      <div class="section-num">05 &nbsp;For the admin</div>
+      <div class="section-head">
+        <h2 id="admin-title" class="reveal">What students asked that the shelf couldn't answer.</h2>
+        <p>Unanswered and downvoted questions, grouped and counted, with a hint about which document is probably missing. Fix the shelf, not the student.</p>
+      </div>
+      <div class="admin">
+        <div class="admin-head">
+          <h3>Gaps this week</h3>
+          <span class="demo-tag">Demo data</span>
+          <div class="tabs" role="group" aria-label="Filter questions">
+            <button class="chip" type="button" aria-pressed="true" data-filter="all">All</button>
+            <button class="chip" type="button" aria-pressed="false" data-filter="unanswered">Unanswered</button>
+            <button class="chip" type="button" aria-pressed="false" data-filter="down">Downvoted</button>
+          </div>
+        </div>
+        <div class="stats">
+          <div class="stat"><b>1,903</b><span>questions asked</span></div>
+          <div class="stat"><b>91%</b><span>answered with a citation</span></div>
+          <div class="stat"><b>64</b><span>not in documents</span></div>
+          <div class="stat"><b>23</b><span>thumbs down</span></div>
+        </div>
+        <ul class="qrows" id="qrows"></ul>
+      </div>
+    </div>
+  </section>
+
+  <!-- 8. Design system -->
+  <section class="section" id="system" aria-labelledby="system-title" style="padding-top: var(--s-8)">
+    <div class="wrap ds">
+      <div>
+        <div class="section-num">06 &nbsp;Design system</div>
+        <div class="section-head" style="margin-bottom: 0">
+          <h2 id="system-title" class="reveal">Paper, ink, one red pencil.</h2>
+          <p>A neutral paper-and-ink base, one vermilion accent for actions, citations and highlights. Yellow, red and green appear only when they mean something. Document types are told apart by pattern, never by colour.</p>
+        </div>
+      </div>
+
+      <div>
+        <h3>Theme</h3>
+        <div style="display:flex; gap: var(--s-4); align-items:center; flex-wrap: wrap">
+          <div class="theme-toggle" role="group" aria-label="Colour theme">
+            <button type="button" data-theme-set="light" aria-pressed="false">Light (default)</button>
+            <button type="button" data-theme-set="dark" aria-pressed="false">Dark</button>
+            <button type="button" data-theme-set="system" aria-pressed="false">Follow system</button>
+          </div>
+          <span class="hand" style="font-size:1.2rem; color: var(--ink-2)">light by default: PDFs are paper</span>
+        </div>
+      </div>
+
+      <div class="ds-grid">
+        <div>
+          <h3>Palette</h3>
+          <div id="swatches"></div>
+        </div>
+        <div>
+          <h3>Contrast (WCAG 2.2)</h3>
+          <div class="table-scroll">
+            <table class="contrast" id="contrast">
+              <caption class="visually-hidden">Contrast ratios for text and background pairs, computed live</caption>
+              <thead><tr><th scope="col">Pair</th><th scope="col">Sample</th><th scope="col">Light</th><th scope="col">Dark</th><th scope="col">Needs</th></tr></thead>
+              <tbody></tbody>
+            </table>
+          </div>
+        </div>
+      </div>
+
+      <div class="ds-grid">
+        <div>
+          <h3>Type</h3>
+          <div class="type-row"><code>Display<br>Bricolage 800</code><span class="s" style="font: 800 3.5rem/.95 var(--font-display); letter-spacing:-.04em">Backlogs</span></div>
+          <div class="type-row"><code>H2 &middot; 28–44px</code><span class="s" style="font: 800 var(--t-h2)/1 var(--font-display); letter-spacing:-.035em">Placement eligibility</span></div>
+          <div class="type-row"><code>H3 &middot; 20px</code><span class="s" style="font: 800 var(--t-h3)/1.2 var(--font-display); letter-spacing:-.02em">Re-evaluation window</span></div>
+          <div class="type-row"><code>Read &middot; 17/1.7<br>Plex Sans 400</code><span class="s" style="font: 400 var(--t-read)/1.7 var(--font-ui)">You need 75% attendance in each course to sit the end-semester exam.</span></div>
+          <div class="type-row"><code>UI &middot; 16 / 14 / 12</code><span class="s" style="font-size: var(--t-small)">Labels, metadata, chips &middot; <span style="font-size: var(--t-micro); letter-spacing:.14em; text-transform: uppercase; font-weight:600">Eyebrow</span></span></div>
+          <div class="type-row"><code>Accent<br>Kalam 400</code><span class="s hand" style="font-size: 1.5rem">annotations only, never answers</span></div>
+        </div>
+        <div>
+          <h3>Spacing &amp; radius</h3>
+          <div id="spacing"></div>
+          <div class="radii" style="margin-top: var(--s-5)">
+            <div style="border-radius: 0">--r-0 &middot; 0<br>buttons, cards</div>
+            <div style="border-radius: 4px">--r-1 &middot; 4<br>list rows</div>
+            <div style="border-radius: 8px">--r-2 &middot; 8<br>menus</div>
+            <div style="border-radius: 999px">--r-pill<br>ask, chips</div>
+          </div>
+        </div>
+      </div>
+
+      <div>
+        <h3>Specimens</h3>
+        <div class="specimens">
+          <button class="btn btn-primary" type="button" data-spring>Ask</button>
+          <button class="btn" type="button" data-spring>Upload PDF</button>
+          <button class="btn btn-ghost" type="button" data-spring>Cancel</button>
+          <button class="btn" type="button" disabled>Uploading&hellip;</button>
+          <form class="ask" style="flex: 1 1 280px" onsubmit="return false" aria-label="Specimen input">
+            <label class="visually-hidden" for="spec-input">Specimen ask box</label>
+            <input id="spec-input" placeholder="Pill input, 17px">
+            <button class="btn btn-primary" type="submit" data-spring aria-label="Ask"><svg aria-hidden="true"><use href="#i-send"/></svg></button>
+          </form>
+          <button class="cite" type="button" data-cite="handbook:14"><svg aria-hidden="true"><use href="#i-page"/></svg>Handbook p.14</button>
+          <button class="chip" type="button">Suggested question</button>
+          <span class="sticker sticker--accent" data-sticker style="--tilt:-6deg">Cited</span>
+          <span class="sticker sticker--warn" data-sticker style="--tilt:4deg"><svg aria-hidden="true"><use href="#i-clock"/></svg>Newer rule wins</span>
+          <span class="sticker sticker--ink" data-sticker style="--tilt:-3deg">Updated circular</span>
+          <span class="status status--unanswered">Not in documents</span>
+          <span class="status status--down">Downvoted</span>
+          <span class="status status--ok">Answered</span>
+        </div>
+      </div>
+
+      <div>
+        <h3>Signature interactions</h3>
+        <ul class="physics">
+          <li><b>Shelf drag &amp; flick</b><span>Pointer-tracked velocity, then free glide with exponential friction. Past either edge the shelf stretches like a rubber band and springs home.</span><code>friction 0.94/frame &middot; rubber 0.35 &middot; edge spring k=170 c=26</code></li>
+          <li><b>Idle drift</b><span>When nobody touches it, the shelf drifts sideways like covers in a shop window. Stops on hover, focus, or reduced motion.</span><code>12 px/s &middot; resumes after 3 s idle</code></li>
+          <li><b>Cover lean</b><span>Covers lean against the direction of travel, proportional to velocity, then settle upright.</span><code>lean = clamp(−v / 300 px/s, ±7°) &middot; eased 10/s</code></li>
+          <li><b>Sticker slap</b><span>Stickers scale in from zero with a stiff, underdamped spring and land with a small overshoot.</span><code>k=420 c=16 m=1 (ζ≈0.39)</code></li>
+          <li><b>Square button press</b><span>Pressing collapses the hard shadow and squashes to 94%; release overshoots back.</span><code>k=600 c=22 (ζ≈0.45)</code></li>
+          <li><b>Heading reveal</b><span>Words rise out of a clip mask, 70 ms apart. The easing is a real spring, compiled into CSS linear() at load.</span><code>k=170 c=19 → linear(), 900 ms</code></li>
+          <li><b>Bottom sheet (mobile)</b><span>Drag the PDF sheet down; release past 30% or a flick faster than 0.6 px/ms dismisses it, otherwise it springs back.</span><code>k=380 c=34 &middot; flick 0.6 px/ms</code></li>
+          <li><b>App UI</b><span>Asking, streaming and reading stay quick and quiet.</span><code>all transitions ≤ 160 ms</code></li>
+        </ul>
+      </div>
+    </div>
+  </section>
+</main>
+
+<footer class="footer">
+  <div class="wrap">
+    <span class="big" aria-hidden="true">Rulebook</span>
+    <p>Design concept for review. Northfield Institute of Technology and all documents, clauses, dates and numbers shown are fictional DEMO content.</p>
+  </div>
+</footer>
+
+<!-- PDF side sheet / bottom sheet -->
+<div class="scrim" id="scrim"></div>
+<div class="pdf-panel" id="pdf-panel" role="dialog" aria-modal="true" aria-labelledby="pdf-title" aria-hidden="true">
+  <div class="sheet-handle" id="sheet-handle" aria-hidden="true"><span></span></div>
+  <div class="pdf-head" id="pdf-head">
+    <div class="doc"><b id="pdf-title">Student Handbook 2025</b><span id="pdf-sub">DEMO &middot; effective 1 Jul 2025</span></div>
+    <div class="pager">
+      <button class="icon-btn" type="button" id="pdf-prev" aria-label="Previous page"><svg aria-hidden="true"><use href="#i-left"/></svg></button>
+      <span id="pdf-pageno">p. 14 / 96</span>
+      <button class="icon-btn" type="button" id="pdf-next" aria-label="Next page"><svg aria-hidden="true"><use href="#i-right"/></svg></button>
+    </div>
+    <button class="icon-btn" type="button" id="pdf-close" aria-label="Close document"><svg aria-hidden="true"><use href="#i-close"/></svg></button>
+  </div>
+  <div class="pdf-body" id="pdf-body"></div>
+  <div class="pdf-foot"><span id="pdf-foot-note">Highlighted: the passage the answer cites.</span><button class="btn btn-sm" type="button" data-spring data-toast="Demo: this would download the original PDF.">Open original</button></div>
+</div>
+
+<div class="toast" id="toast" role="status" aria-live="polite"></div>
+
+<script src="app.js" defer></script>
+</body>
+</html>
